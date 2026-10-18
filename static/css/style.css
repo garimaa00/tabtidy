@@ -253,3 +253,23 @@ body {
     }
 }
 
+.form-card input:not([type="checkbox"]),
+.form-card select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #dbe3ea;
+    border-radius: 8px;
+}
+
+.form-card input:focus,
+.form-card select:focus {
+    border-color: var(--accent);
+    outline: 2px solid #0d948820;
+}
+
+.form-card ul {
+    padding-left: 18px;
+    font-size: 13px;
+}
+
+

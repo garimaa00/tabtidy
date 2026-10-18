@@ -1,0 +1,59 @@
+
+{% extends 'links/base.html' %}
+
+{% block title %}Create account | TabTidy{% endblock %}
+
+{% block content %}
+<div class="form-wrapper mx-auto">
+    <div class="form-card">
+        <a href="{% url 'login' %}" class="back-link">
+            ← Back to login
+        </a>
+
+        <h1 class="h3 fw-bold mt-3">Create your account</h1>
+        <p class="text-secondary">
+            Start building your own personal link collection.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                           for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <div class="form-text">
+                            {{ field.help_text|safe }}
+                        </div>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary w-100">
+                Create account
+            </button>
+        </form>
+
+        <p class="text-center text-secondary mt-4 mb-0">
+            Already have an account?
+            <a href="{% url 'login' %}">Sign in</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,4 +1,4 @@
-
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
@@ -7,7 +7,14 @@ from .models import SavedLink
 
 class TabTidyTests(TestCase):
     def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='TestPassword123!'
+        )
+        self.client.force_login(self.user)
+
         self.link = SavedLink.objects.create(
+            owner=self.user,
             title='Django Docs',
             url='https://docs.djangoproject.com/',
             category='Coding',

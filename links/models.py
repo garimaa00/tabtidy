@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -10,6 +11,14 @@ class SavedLink(models.Model):
         ('Personal', 'Personal'),
         ('Other', 'Other'),
     ]
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='saved_links',
+        null=True,
+        blank=True,
+    )
 
     title = models.CharField(max_length=150)
     url = models.URLField(max_length=500)

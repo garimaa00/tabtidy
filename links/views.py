@@ -1,4 +1,7 @@
 from django.contrib import messages
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -6,8 +9,27 @@ from .forms import SavedLinkForm
 from .models import SavedLink
 
 
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('link_list')
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Your TabTidy account is ready!')
+            return redirect('link_list')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'links/register.html', {'form': form})
+
+@login_required
 def link_list(request):
-    links = SavedLink.objects.all()
+    all_links = SavedLink.objects.filter(owner=request.user)
+    links = all_links
 
     query = request.GET.get('q', '').strip()
     category = request.GET.get('category', '')
@@ -28,7 +50,6 @@ def link_list(request):
     elif status == 'pending':
         links = links.filter(is_visited=False)
 
-    all_links = SavedLink.objects.all()
 
     total_links = all_links.count()
     visited_links = all_links.filter(is_visited=True).count()
@@ -53,13 +74,15 @@ def link_list(request):
 
     return render(request, 'links/link_list.html', context)
 
-
+@login_required
 def link_create(request):
     if request.method == 'POST':
         form = SavedLinkForm(request.POST)
 
         if form.is_valid():
-            form.save()
+            link= form.save(commit=False)
+            link.owner = request.user
+            link.save()
             messages.success(request, 'Link saved successfully!')
             return redirect('link_list')
     else:
@@ -70,9 +93,9 @@ def link_create(request):
         'page_title': 'Save a new link',
     })
 
-
+@login_required
 def link_update(request, pk):
-    link = get_object_or_404(SavedLink, pk=pk)
+    link = get_object_or_404(SavedLink, pk=pk, owner=request.user)
 
     if request.method == 'POST':
         form = SavedLinkForm(request.POST, instance=link)
@@ -89,9 +112,9 @@ def link_update(request, pk):
         'page_title': 'Edit saved link',
     })
 
-
+@login_required
 def link_toggle_visited(request, pk):
-    link = get_object_or_404(SavedLink, pk=pk)
+    link = get_object_or_404(SavedLink, pk=pk, owner=request.user)
 
     if request.method == 'POST':
         link.is_visited = not link.is_visited
@@ -101,8 +124,9 @@ def link_toggle_visited(request, pk):
     return redirect('link_list')
 
 
+@login_required
 def link_delete(request, pk):
-    link = get_object_or_404(SavedLink, pk=pk)
+    link = get_object_or_404(SavedLink, pk=pk, owner=request.user)
 
     if request.method == 'POST':
         link.delete()
