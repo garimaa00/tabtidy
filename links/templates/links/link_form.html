@@ -1,0 +1,101 @@
+
+{% extends 'links/base.html' %}
+
+{% block title %}{{ page_title }} | TabTidy{% endblock %}
+
+{% block content %}
+
+<div class="form-wrapper mx-auto">
+    <a href="{% url 'link_list' %}" class="back-link">
+        <span aria-hidden="true">←</span>
+        <span>Back to dashboard</span>
+    </a>
+
+    <div class="form-card mt-3">
+        <h1 class="h3 fw-bold mb-2">{{ page_title }}</h1>
+        <p class="text-secondary mb-4">
+            Keep a useful website close without keeping another tab open.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="mb-3">
+                <label for="{{ form.title.id_for_label }}"
+                       class="form-label fw-semibold">
+                    Link title
+                </label>
+                {{ form.title }}
+                {% for error in form.title.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.url.id_for_label }}"
+                       class="form-label fw-semibold">
+                    Website URL
+                </label>
+                {{ form.url }}
+                {% for error in form.url.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+                <div class="form-text">
+                    Include https:// or http://
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.category.id_for_label }}"
+                       class="form-label fw-semibold">
+                    Category
+                </label>
+                {{ form.category }}
+                {% for error in form.category.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.note.id_for_label }}"
+                       class="form-label fw-semibold">
+                    Note (optional)
+                </label>
+                {{ form.note }}
+                {% for error in form.note.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-check mb-4">
+                {{ form.is_visited }}
+                <label class="form-check-label"
+                       for="{{ form.is_visited.id_for_label }}">
+                    I've already explored this link
+                </label>
+                {% for error in form.is_visited.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary px-4">
+                    Save link
+                </button>
+
+                <a href="{% url 'link_list' %}"
+                   class="btn btn-light border">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+
+{% extends 'links/base.html' %}
+
+{% block title %}Delete link | TabTidy{% endblock %}
+
+{% block content %}
+
+<div class="form-wrapper mx-auto">
+    <div class="form-card text-center">
+        <div class="empty-icon">!</div>
+
+        <h1 class="h3 fw-bold">Delete this link?</h1>
+
+        <p class="text-secondary">
+            Are you sure you want to delete
+            <strong>{{ link.title }}</strong>?
+            This action cannot be undone.
+        </p>
+
+        <form method="post" class="d-flex justify-content-center gap-2 mt-4">
+            {% csrf_token %}
+
+            <button type="submit" class="btn btn-danger">
+                Yes, delete link
+            </button>
+
+            <a href="{% url 'link_list' %}"
+               class="btn btn-light border">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
