@@ -30,9 +30,11 @@ class SavedLink(models.Model):
     note = models.TextField(blank=True)
     is_visited = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_favourite = models.BooleanField(default=False)
+    is_pinned = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['is_visited', '-created_at']
+        ordering = ['-is_pinned', 'is_visited', '-created_at']
 
     def __str__(self):
         return self.title

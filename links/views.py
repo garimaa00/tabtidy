@@ -3,6 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import SavedLinkForm
@@ -137,3 +138,25 @@ def link_delete(request, pk):
         'link': link,
     })
 
+@login_required
+def toggle_favourite(request, pk):
+    if request.method == 'POST':
+        link = get_object_or_404(
+            SavedLink, pk=pk, owner=request.user
+        )
+        link.is_favourite = not link.is_favourite
+        link.save(update_fields=['is_favourite'])
+
+    return redirect('link_list')
+
+
+@login_required
+def toggle_pin(request, pk):
+    if request.method == 'POST':
+        link = get_object_or_404(
+            SavedLink, pk=pk, owner=request.user
+        )
+        link.is_pinned = not link.is_pinned
+        link.save(update_fields=['is_pinned'])
+
+    return redirect('link_list')

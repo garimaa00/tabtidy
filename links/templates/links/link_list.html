@@ -1,4 +1,3 @@
-
 {% extends 'links/base.html' %}
 
 {% block title %}Dashboard | TabTidy{% endblock %}
@@ -57,7 +56,6 @@
 </div>
 
 
-
 <!-- Exploration progress and chart -->
 <div class="stat-card mb-4">
 
@@ -80,14 +78,15 @@
          aria-valuenow="{{ progress_percent }}">
 
         <div class="progress-bar"
-            style="width: var(--progress);">
+            role="presentation"
+            data-progress="{{ progress_percent|default:0 }}">
         </div>
     </div>
 
     <div class="exploration-chart">
 
         <div class="chart-ring"
-            style="--progress: {{progress_percent }}%;">
+             style="--progress: {{ progress_percent }}%;">
 
             <div class="chart-center">
                 <strong>{{ progress_percent }}%</strong>
@@ -123,11 +122,8 @@
             </div>
 
         </div>
-
     </div>
-
 </div>
-
 
 
 <!-- Search and filters -->
@@ -152,9 +148,7 @@
 
                 {% for value, label in categories %}
                     <option value="{{ value }}"
-                        {% if selected_category == value %}
-                            selected
-                        {% endif %}>
+                        {% if selected_category == value %}selected{% endif %}>
                         {{ label }}
                     </option>
                 {% endfor %}
@@ -168,16 +162,12 @@
                 <option value="">All statuses</option>
 
                 <option value="pending"
-                    {% if selected_status == 'pending' %}
-                        selected
-                    {% endif %}>
+                    {% if selected_status == 'pending' %}selected{% endif %}>
                     To explore
                 </option>
 
                 <option value="visited"
-                    {% if selected_status == 'visited' %}
-                        selected
-                    {% endif %}>
+                    {% if selected_status == 'visited' %}selected{% endif %}>
                     Explored
                 </option>
 
@@ -191,7 +181,6 @@
         </div>
 
     </div>
-
 </form>
 
 
@@ -242,6 +231,20 @@
                     </div>
 
 
+                    <!-- Pinned and favourite indicators -->
+                    {% if link.is_pinned or link.is_favourite %}
+                        <div class="small mb-2">
+                            {% if link.is_pinned %}
+                                <span class="me-2">📌 Pinned</span>
+                            {% endif %}
+
+                            {% if link.is_favourite %}
+                                <span>⭐ Favourite</span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+
                     <!-- Title -->
                     <h3 class="h5 fw-bold mb-2">
                         {{ link.title }}
@@ -250,17 +253,13 @@
 
                     <!-- Note -->
                     {% if link.note %}
-
                         <p class="text-secondary small mb-3">
                             {{ link.note|truncatechars:120 }}
                         </p>
-
                     {% else %}
-
                         <p class="text-secondary small mb-3">
                             No note added.
                         </p>
-
                     {% endif %}
 
 
@@ -284,6 +283,45 @@
                     <!-- Card actions -->
                     <div class="d-flex flex-wrap gap-2 mt-auto">
 
+                        <!-- Favourite button -->
+                        <form method="post"
+                              action="{% url 'toggle_favourite' link.pk %}">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="btn btn-sm btn-outline-warning">
+
+                                {% if link.is_favourite %}
+                                    ⭐ Unfavourite
+                                {% else %}
+                                    ☆ Favourite
+                                {% endif %}
+
+                            </button>
+                        </form>
+
+
+                        <!-- Pin button -->
+                        <form method="post"
+                              action="{% url 'toggle_pin' link.pk %}">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="btn btn-sm btn-outline-primary">
+
+                                {% if link.is_pinned %}
+                                    📌 Unpin
+                                {% else %}
+                                    📌 Pin
+                                {% endif %}
+
+                            </button>
+                        </form>
+
+
+                        <!-- Mark explored / pending -->
                         <form method="post"
                               action="{% url 'link_toggle_visited' link.pk %}">
 
@@ -299,23 +337,20 @@
                                 {% endif %}
 
                             </button>
-
                         </form>
 
 
+                        <!-- Edit -->
                         <a href="{% url 'link_update' link.pk %}"
                            class="btn btn-sm btn-outline-secondary">
-
                             Edit
-
                         </a>
 
 
+                        <!-- Delete -->
                         <a href="{% url 'link_delete' link.pk %}"
                            class="btn btn-sm btn-outline-danger">
-
                             Delete
-
                         </a>
 
                     </div>
@@ -373,3 +408,4 @@
 {% endif %}
 
 {% endblock %}
+```

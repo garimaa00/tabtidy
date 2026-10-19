@@ -24,4 +24,15 @@ urlpatterns = [
         name='link_toggle_visited',
     ),
     path('delete/<int:pk>/', views.link_delete, name='link_delete'),
+    path(
+        'favourite/<int:pk>/',
+        views.toggle_favourite,
+        name='toggle_favourite',
+    ),
+    path(
+        'pin/<int:pk>/',
+        views.toggle_pin,
+        name='toggle_pin',
+    ),
+
 ]
