@@ -1,410 +1,300 @@
+
 {% extends 'links/base.html' %}
 
-{% block title %}Dashboard | TabTidy{% endblock %}
+{% block title %}My Collection | TabTidy{% endblock %}
 
 {% block content %}
 
-<!-- Page heading -->
-<div class="d-flex flex-column flex-md-row justify-content-between
-            align-items-md-center gap-3 mb-4">
-
-    <div>
-        <p class="text-primary fw-semibold mb-1">
-            YOUR PERSONAL LINK SPACE
-        </p>
-
-        <h1 class="fw-bold mb-2">
-            Clear your tabs. Clear your mind.
-        </h1>
-
-        <p class="text-secondary mb-0">
-            Keep useful links in one place and explore them at your own pace.
-        </p>
+<section class="dashboard-hero mb-4">
+    <div class="hero-copy">
+        <span class="eyebrow"><span class="eyebrow-dot"></span> YOUR LITTLE CORNER OF THE INTERNET</span>
+        <h1>Less scrolling.<br><span>More discovering.</span></h1>
+        <p>A thoughtful home for the websites you want to remember, revisit, and explore.</p>
     </div>
 
-    <a href="{% url 'link_create' %}"
-       class="btn btn-primary px-4 py-2 flex-shrink-0">
-        + Add link
+    <div class="hero-decoration" aria-hidden="true">
+        <span class="hero-orbit orbit-one"></span>
+        <span class="hero-orbit orbit-two"></span>
+        <span class="hero-leaf">✳</span>
+        <span class="hero-decoration-caption">Collect what<br>inspires you.</span>
+    </div>
+
+    <a href="{% url 'link_create' %}" class="btn btn-primary hero-button">
+        <span aria-hidden="true">＋</span> Save a link
     </a>
-</div>
+</section>
 
-
-<!-- Dashboard statistics -->
-<div class="row g-3 mb-4">
-
+<section class="row g-3 mb-4" aria-label="Collection statistics">
     <div class="col-12 col-sm-4">
-        <div class="stat-card">
-            <p class="text-secondary mb-2">Total saved</p>
-            <h2 class="fw-bold mb-0">{{ total_links }}</h2>
-        </div>
+        <article class="stat-card stat-total h-100">
+            <div class="stat-topline">
+                <span class="stat-icon">↗</span>
+                <span class="stat-caption">YOUR LIBRARY</span>
+            </div>
+            <p class="stat-title">Saved links</p>
+            <div class="stat-number">{{ total_links }}</div>
+            <p class="stat-footnote">Little things worth keeping.</p>
+        </article>
     </div>
 
     <div class="col-12 col-sm-4">
-        <div class="stat-card">
-            <p class="text-secondary mb-2">Explored</p>
-            <h2 class="fw-bold mb-0">{{ visited_links }}</h2>
-        </div>
+        <article class="stat-card stat-explored h-100">
+            <div class="stat-topline">
+                <span class="stat-icon">✓</span>
+                <span class="stat-caption">DISCOVERED</span>
+            </div>
+            <p class="stat-title">Explored</p>
+            <div class="stat-number">{{ visited_links }}</div>
+            <p class="stat-footnote">Curiosity put into action.</p>
+        </article>
     </div>
 
     <div class="col-12 col-sm-4">
-        <div class="stat-card">
-            <p class="text-secondary mb-2">Still to explore</p>
-            <h2 class="fw-bold mb-0">{{ pending_links }}</h2>
-        </div>
+        <article class="stat-card stat-pending h-100">
+            <div class="stat-topline">
+                <span class="stat-icon">⌁</span>
+                <span class="stat-caption">UP NEXT</span>
+            </div>
+            <p class="stat-title">Still to explore</p>
+            <div class="stat-number">{{ pending_links }}</div>
+            <p class="stat-footnote">Something interesting awaits.</p>
+        </article>
     </div>
+</section>
 
-</div>
-
-
-<!-- Exploration progress and chart -->
-<div class="stat-card mb-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
+<section class="progress-panel mb-5">
+    <div class="progress-panel-heading">
         <div>
-            <h2 class="h6 fw-bold mb-1">Exploration progress</h2>
-            <p class="text-secondary small mb-0">
-                Track how much of your collection you've explored.
-            </p>
+            <span class="eyebrow">YOUR DISCOVERY JOURNEY</span>
+            <h2>Look how far you've come.</h2>
+            <p>Every explored link is one less thing left open in your mind.</p>
         </div>
-
-        <span class="progress-label">{{ progress_percent }}%</span>
+        <span class="progress-label">{{ progress_percent|default:0 }}%</span>
     </div>
 
-    <div class="progress mb-3"
+    <div class="progress mb-4"
          role="progressbar"
          aria-label="Exploration progress"
          aria-valuemin="0"
          aria-valuemax="100"
-         aria-valuenow="{{ progress_percent }}">
-
+         aria-valuenow="{{ progress_percent|default:0 }}">
         <div class="progress-bar"
-            style="width: {{ progress_percent|default:0 }}%;">
+             style="width: {{ progress_percent|default:0 }}%;">
         </div>
     </div>
 
-    <div class="exploration-chart">
-
-        <div class="chart-ring"
-             style="--progress: {{ progress_percent|default:0 }}%;">
-
-            <div class="chart-center">
-                <strong>{{ progress_percent }}%</strong>
-                <span>explored</span>
-            </div>
-
-        </div>
-
-        <div class="chart-legend">
-
-            <div class="legend-item">
-                <span class="legend-dot explored-dot"></span>
-                <div>
-                    <strong>{{ visited_links }}</strong>
-                    <span>Explored</span>
+    <div class="progress-details">
+        <div class="exploration-chart">
+            <div class="chart-ring"
+                 style="--progress: {{ progress_percent|default:0 }}%;">
+                <div class="chart-center">
+                    <strong>{{ progress_percent|default:0 }}%</strong>
+                    <span>explored</span>
                 </div>
             </div>
 
-            <div class="legend-item">
-                <span class="legend-dot pending-dot"></span>
-                <div>
-                    <strong>{{ pending_links }}</strong>
-                    <span>To explore</span>
-                </div>
-            </div>
-
-            <div class="legend-item">
-                <span class="legend-dot total-dot"></span>
-                <div>
-                    <strong>{{ total_links }}</strong>
-                    <span>Total links</span>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-<!-- Search and filters -->
-<form method="get" class="filter-card mb-4">
-
-    <div class="row g-2">
-
-        <div class="col-12 col-md-5">
-            <input
-                type="search"
-                name="q"
-                value="{{ query }}"
-                class="form-control"
-                placeholder="Search titles, URLs or notes..."
-            >
-        </div>
-
-        <div class="col-6 col-md-3">
-            <select name="category" class="form-select">
-
-                <option value="">All categories</option>
-
-                {% for value, label in categories %}
-                    <option value="{{ value }}"
-                        {% if selected_category == value %}selected{% endif %}>
-                        {{ label }}
-                    </option>
-                {% endfor %}
-
-            </select>
-        </div>
-
-        <div class="col-6 col-md-2">
-            <select name="status" class="form-select">
-
-                <option value="">All statuses</option>
-
-                <option value="pending"
-                    {% if selected_status == 'pending' %}selected{% endif %}>
-                    To explore
-                </option>
-
-                <option value="visited"
-                    {% if selected_status == 'visited' %}selected{% endif %}>
-                    Explored
-                </option>
-
-            </select>
-        </div>
-
-        <div class="col-12 col-md-2 d-grid">
-            <button type="submit" class="btn btn-dark">
-                Filter
-            </button>
-        </div>
-
-    </div>
-</form>
-
-
-<!-- Saved links heading -->
-<div class="d-flex justify-content-between align-items-center mb-3">
-
-    <h2 class="h4 fw-bold mb-0">
-        Your collection
-    </h2>
-
-    <span class="text-secondary small">
-        {{ links|length }} result{{ links|length|pluralize }}
-    </span>
-
-</div>
-
-
-<!-- Link cards -->
-{% if links %}
-
-    <div class="row g-3">
-
-        {% for link in links %}
-
-            <div class="col-12 col-md-6 col-lg-4">
-
-                <article class="link-card h-100
-                    {% if link.is_visited %}visited-card{% endif %}">
-
-                    <!-- Category and status -->
-                    <div class="d-flex justify-content-between
-                                align-items-start gap-2 mb-3">
-
-                        <span class="category-badge">
-                            {{ link.category }}
-                        </span>
-
-                        {% if link.is_visited %}
-                            <span class="badge text-bg-success">
-                                Explored
-                            </span>
-                        {% else %}
-                            <span class="badge text-bg-light">
-                                To explore
-                            </span>
-                        {% endif %}
-
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <span class="legend-dot explored-dot"></span>
+                    <div>
+                        <strong>{{ visited_links }} explored</strong>
+                        <span>You've already visited these</span>
                     </div>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot pending-dot"></span>
+                    <div>
+                        <strong>{{ pending_links }} to explore</strong>
+                        <span>Waiting in your collection</span>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot total-dot"></span>
+                    <div>
+                        <strong>{{ total_links }} in total</strong>
+                        <span>Your growing library</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="progress-note">
+            <span class="progress-note-icon">✳</span>
+            <p>There's no rush. Explore at your own pace.</p>
+        </div>
+    </div>
+</section>
 
-                    <!-- Pinned and favourite indicators -->
-                    {% if link.is_pinned or link.is_favourite %}
-                        <div class="small mb-2">
-                            {% if link.is_pinned %}
-                                <span class="me-2">📌 Pinned</span>
-                            {% endif %}
+<section class="collection-section">
+    <div class="collection-heading">
+        <div>
+            <span class="eyebrow">THE GOOD STUFF</span>
+            <h2>Your collection<span class="heading-period">.</span></h2>
+            <p>All your saved corners of the web, in one place.</p>
+        </div>
+        <span class="result-count">{{ links|length }} result{{ links|length|pluralize }}</span>
+    </div>
 
-                            {% if link.is_favourite %}
-                                <span>⭐ Favourite</span>
+    <form method="get" class="filter-card mb-4">
+        <div class="row g-2">
+            <div class="col-12 col-md-5">
+                <label for="link-search" class="visually-hidden">Search links</label>
+                <input id="link-search"
+                       type="search"
+                       name="q"
+                       value="{{ query }}"
+                       class="form-control"
+                       placeholder="⌕  Search your collection...">
+            </div>
+
+            <div class="col-6 col-md-3">
+                <label for="category-filter" class="visually-hidden">Filter by category</label>
+                <select id="category-filter" name="category" class="form-select">
+                    <option value="">Every category</option>
+                    {% for value, label in categories %}
+                        <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <label for="status-filter" class="visually-hidden">Filter by status</label>
+                <select id="status-filter" name="status" class="form-select">
+                    <option value="">Every status</option>
+                    <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>
+                        To explore
+                    </option>
+                    <option value="visited" {% if selected_status == 'visited' %}selected{% endif %}>
+                        Explored
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary filter-button">
+                    Find links
+                </button>
+            </div>
+        </div>
+    </form>
+
+    {% if links %}
+        <div class="row g-3">
+            {% for link in links %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <article class="link-card collection-link-card h-100 {% if link.is_visited %}visited-card{% endif %}">
+                        <div class="link-card-top">
+                            <span class="category-badge">{{ link.category }}</span>
+
+                            {% if link.is_visited %}
+                                <span class="status-pill status-explored">
+                                    <span>✓</span> Explored
+                                </span>
+                            {% else %}
+                                <span class="status-pill status-pending">
+                                    To explore
+                                </span>
                             {% endif %}
                         </div>
-                    {% endif %}
 
-
-                    <!-- Title -->
-                    <h3 class="h5 fw-bold mb-2">
-                        {{ link.title }}
-                    </h3>
-
-
-                    <!-- Note -->
-                    {% if link.note %}
-                        <p class="text-secondary small mb-3">
-                            {{ link.note|truncatechars:120 }}
-                        </p>
-                    {% else %}
-                        <p class="text-secondary small mb-3">
-                            No note added.
-                        </p>
-                    {% endif %}
-
-
-                    <!-- Website URL -->
-                    <a href="{{ link.url }}"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       class="link-url d-block text-truncate mb-3">
-
-                        {{ link.url }}
-
-                    </a>
-
-
-                    <!-- Date saved -->
-                    <p class="text-secondary small">
-                        Saved {{ link.created_at|date:"M d, Y" }}
-                    </p>
-
-
-                    <!-- Card actions -->
-                    <div class="d-flex flex-wrap gap-2 mt-auto">
-
-                        <!-- Favourite button -->
-                        <form method="post"
-                              action="{% url 'toggle_favourite' link.pk %}">
-
-                            {% csrf_token %}
-
-                            <button type="submit"
-                                    class="btn btn-sm btn-outline-warning">
-
-                                {% if link.is_favourite %}
-                                    ⭐ Unfavourite
-                                {% else %}
-                                    ☆ Favourite
-                                {% endif %}
-
-                            </button>
-                        </form>
-
-
-                        <!-- Pin button -->
-                        <form method="post"
-                              action="{% url 'toggle_pin' link.pk %}">
-
-                            {% csrf_token %}
-
-                            <button type="submit"
-                                    class="btn btn-sm btn-outline-primary">
-
+                        {% if link.is_pinned or link.is_favourite %}
+                            <div class="link-flags">
                                 {% if link.is_pinned %}
-                                    📌 Unpin
-                                {% else %}
-                                    📌 Pin
+                                    <span>↗ Pinned</span>
                                 {% endif %}
-
-                            </button>
-                        </form>
-
-
-                        <!-- Mark explored / pending -->
-                        <form method="post"
-                              action="{% url 'link_toggle_visited' link.pk %}">
-
-                            {% csrf_token %}
-
-                            <button type="submit"
-                                    class="btn btn-sm btn-outline-success">
-
-                                {% if link.is_visited %}
-                                    Mark pending
-                                {% else %}
-                                    Mark explored
+                                {% if link.is_favourite %}
+                                    <span>♥ Favourite</span>
                                 {% endif %}
+                            </div>
+                        {% endif %}
 
-                            </button>
-                        </form>
+                        <h3 class="link-card-title">{{ link.title }}</h3>
 
+                        {% if link.note %}
+                            <p class="link-card-note">{{ link.note|truncatechars:120 }}</p>
+                        {% else %}
+                            <p class="link-card-note note-muted">A little corner of the web worth keeping.</p>
+                        {% endif %}
 
-                        <!-- Edit -->
-                        <a href="{% url 'link_update' link.pk %}"
-                           class="btn btn-sm btn-outline-secondary">
-                            Edit
+                        <a href="{{ link.url }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="link-url"
+                           title="{{ link.url }}">
+                            <span aria-hidden="true">↗</span>
+                            {{ link.url|truncatechars:48 }}
                         </a>
 
+                        <div class="link-card-footer">
+                            <span class="saved-date">Saved {{ link.created_at|date:"M d, Y" }}</span>
+                        </div>
 
-                        <!-- Delete -->
-                        <a href="{% url 'link_delete' link.pk %}"
-                           class="btn btn-sm btn-outline-danger">
-                            Delete
-                        </a>
+                        <div class="link-actions">
+                            <form method="post" action="{% url 'toggle_favourite' link.pk %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="btn btn-sm action-button {% if link.is_favourite %}action-active{% endif %}"
+                                        aria-label="{% if link.is_favourite %}Remove favourite{% else %}Add favourite{% endif %}"
+                                        title="{% if link.is_favourite %}Remove favourite{% else %}Add favourite{% endif %}">
+                                    {% if link.is_favourite %}♥{% else %}♡{% endif %}
+                                </button>
+                            </form>
 
-                    </div>
+                            <form method="post" action="{% url 'toggle_pin' link.pk %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="btn btn-sm action-button {% if link.is_pinned %}action-active{% endif %}"
+                                        aria-label="{% if link.is_pinned %}Unpin link{% else %}Pin link{% endif %}"
+                                        title="{% if link.is_pinned %}Unpin link{% else %}Pin link{% endif %}">
+                                    ↗
+                                </button>
+                            </form>
 
-                </article>
+                            <form method="post" action="{% url 'link_toggle_visited' link.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm action-button action-visit">
+                                    {% if link.is_visited %}Undo explored{% else %}Mark explored{% endif %}
+                                </button>
+                            </form>
 
-            </div>
+                            <a href="{% url 'link_update' link.pk %}"
+                               class="btn btn-sm action-button"
+                               aria-label="Edit {{ link.title }}">
+                                Edit
+                            </a>
 
-        {% endfor %}
+                            <a href="{% url 'link_delete' link.pk %}"
+                               class="btn btn-sm action-button action-delete"
+                               aria-label="Delete {{ link.title }}">
+                                Delete
+                            </a>
+                        </div>
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
 
-    </div>
+    {% else %}
+        <div class="empty-state collection-empty">
+            <div class="empty-icon">✳</div>
 
-
-<!-- Empty state -->
-{% else %}
-
-    <div class="empty-state text-center">
-
-        <div class="empty-icon">↗</div>
-
-        {% if query or selected_category or selected_status %}
-
-            <h3 class="h5 fw-bold">
-                No matching links
-            </h3>
-
-            <p class="text-secondary">
-                Try changing your search or filters.
-            </p>
-
-            <a href="{% url 'link_list' %}"
-               class="btn btn-outline-secondary">
-                Clear filters
-            </a>
-
-        {% else %}
-
-            <h3 class="h5 fw-bold">
-                Your space is ready.
-            </h3>
-
-            <p class="text-secondary">
-                Save your first useful link and start decluttering your tabs.
-            </p>
-
-            <a href="{% url 'link_create' %}"
-               class="btn btn-primary">
-                Save your first link
-            </a>
-
-        {% endif %}
-
-    </div>
-
-{% endif %}
+            {% if query or selected_category or selected_status %}
+                <h3 class="h4 fw-bold">Nothing found this time.</h3>
+                <p class="text-secondary">Try another search or loosen your filters.</p>
+                <a href="{% url 'link_list' %}" class="btn btn-outline-primary">
+                    Clear filters
+                </a>
+            {% else %}
+                <h3 class="h4 fw-bold">A fresh page, full of possibility.</h3>
+                <p class="text-secondary">Save your first link and start building a collection of your own.</p>
+                <a href="{% url 'link_create' %}" class="btn btn-primary">
+                    ＋ Save your first link
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
 
 {% endblock %}
-```
