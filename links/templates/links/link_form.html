@@ -17,7 +17,7 @@
             Keep a useful website close without keeping another tab open.
         </p>
 
-        <form method="post">
+        <form method="post" id="link-form" novalidate>
             {% csrf_token %}
 
             {% if form.non_field_errors %}
@@ -26,17 +26,16 @@
                 </div>
             {% endif %}
 
-            
             <div class="mb-3">
                 <label for="{{ form.title.id_for_label }}"
-                    class="form-label fw-semibold">
+                       class="form-label fw-semibold">
                     Link title
                 </label>
 
                 {{ form.title }}
 
-                <div id="title-message" class="form-text">
-                    Enter a website URL.
+                <div id="title-message" class="form-text" aria-live="polite">
+                    Enter a short, descriptive title.
                 </div>
 
                 {% for error in form.title.errors %}
@@ -46,28 +45,29 @@
 
             <div class="mb-3">
                 <label for="{{ form.url.id_for_label }}"
-                    class="form-label fw-semibold">
+                       class="form-label fw-semibold">
                     Website URL
                 </label>
 
                 {{ form.url }}
 
+                <div id="url-message" class="form-text">
+                    Paste a valid URL, such as https://example.com.
+                </div>
+
                 {% for error in form.url.errors %}
                     <div class="text-danger small mt-1">{{ error }}</div>
                 {% endfor %}
-
-                <div class="form-text">
-                    Paste the full URL, including https://
-                </div>
             </div>
-
 
             <div class="mb-3">
                 <label for="{{ form.category.id_for_label }}"
                        class="form-label fw-semibold">
                     Category
                 </label>
+
                 {{ form.category }}
+
                 {% for error in form.category.errors %}
                     <div class="text-danger small mt-1">{{ error }}</div>
                 {% endfor %}
@@ -78,7 +78,9 @@
                        class="form-label fw-semibold">
                     Note (optional)
                 </label>
+
                 {{ form.note }}
+
                 {% for error in form.note.errors %}
                     <div class="text-danger small mt-1">{{ error }}</div>
                 {% endfor %}
@@ -86,10 +88,12 @@
 
             <div class="form-check mb-4">
                 {{ form.is_visited }}
+
                 <label class="form-check-label"
                        for="{{ form.is_visited.id_for_label }}">
                     I've already explored this link
                 </label>
+
                 {% for error in form.is_visited.errors %}
                     <div class="text-danger small mt-1">{{ error }}</div>
                 {% endfor %}
@@ -110,4 +114,3 @@
 </div>
 
 {% endblock %}
-

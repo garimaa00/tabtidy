@@ -511,3 +511,17 @@ body {
     );
 }
 
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+}
+
+.form-control.is-valid,
+.form-select.is-valid {
+    border-color: var(--accent);
+}
+
+:root[data-theme="dark"] .invalid-feedback {
+    color: #fca5a5;
+}
+

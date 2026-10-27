@@ -12,6 +12,7 @@ websites, reduce browser tab clutter, and track their exploration progress.
 - Search by title, URL, or note
 - Filter by category and exploration status
 - Track saved, explored, and pending links
+- Dark/light mode toggle
 - Responsive dashboard using Bootstrap 5
 - Form validation using Django ModelForms
 - Automated tests for core functionality
