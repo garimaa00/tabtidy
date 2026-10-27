@@ -78,15 +78,14 @@
          aria-valuenow="{{ progress_percent }}">
 
         <div class="progress-bar"
-            role="presentation"
-            data-progress="{{ progress_percent|default:0 }}">
+            style="width: {{ progress_percent|default:0 }}%;">
         </div>
     </div>
 
     <div class="exploration-chart">
 
         <div class="chart-ring"
-             style="--progress: {{ progress_percent }}%;">
+             style="--progress: {{ progress_percent|default:0 }}%;">
 
             <div class="chart-center">
                 <strong>{{ progress_percent }}%</strong>
