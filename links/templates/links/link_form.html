@@ -1,116 +1,60 @@
 
 {% extends 'links/base.html' %}
 
-{% block title %}{{ page_title }} | TabTidy{% endblock %}
+{% block title %}{% if object or link %}Edit link{% else %}Save a link{% endif %} | TabTidy{% endblock %}
 
 {% block content %}
+<div class="editor-layout">
+    <section class="editor-intro">
+        <span class="eyebrow">YOUR COLLECTION, GROWING</span>
 
-<div class="form-wrapper mx-auto">
-    <a href="{% url 'link_list' %}" class="back-link">
-        <span aria-hidden="true">←</span>
-        <span>Back to dashboard</span>
-    </a>
+        <h1>{% if object or link %}Give this link a <em>little refresh.</em>{% else %}Found something <em>worth keeping?</em>{% endif %}</h1>
 
-    <div class="form-card mt-3">
-        <h1 class="h3 fw-bold mb-2">{{ page_title }}</h1>
-        <p class="text-secondary mb-4">
-            Keep a useful website close without keeping another tab open.
-        </p>
+        <p>Save a useful website, add a few details, and make it easy to find again whenever you need it.</p>
 
-        <form method="post" id="link-form" novalidate>
+        <div class="editor-tip">
+            <span>✳</span>
+            <p><strong>A tiny tip</strong><br>
+            Add a helpful note so future-you remembers why you saved it.</p>
+        </div>
+    </section>
+
+    <section class="form-card link-form-card">
+        <div class="form-heading">
+            <span class="form-symbol">↗</span>
+            <h2>{% if object or link %}Edit your link{% else %}Save a new link{% endif %}</h2>
+            <p>Just the details you need to keep things tidy.</p>
+        </div>
+
+        <form method="post" class="tidy-form">
             {% csrf_token %}
 
             {% if form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {{ form.non_field_errors }}
-                </div>
+                <div class="form-alert">{{ form.non_field_errors }}</div>
             {% endif %}
 
-            <div class="mb-3">
-                <label for="{{ form.title.id_for_label }}"
-                       class="form-label fw-semibold">
-                    Link title
-                </label>
+            {% for field in form %}
+                <div class="tidy-field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
 
-                {{ form.title }}
+                    {% if field.help_text %}
+                        <small class="field-help">{{ field.help_text }}</small>
+                    {% endif %}
 
-                <div id="title-message" class="form-text" aria-live="polite">
-                    Enter a short, descriptive title.
+                    {% for error in field.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
                 </div>
+            {% endfor %}
 
-                {% for error in form.title.errors %}
-                    <div class="text-danger small mt-1">{{ error }}</div>
-                {% endfor %}
-            </div>
+            <button type="submit" class="form-submit">
+                {% if object or link %}Save changes{% else %}Save this link{% endif %}
+                <span>→</span>
+            </button>
 
-            <div class="mb-3">
-                <label for="{{ form.url.id_for_label }}"
-                       class="form-label fw-semibold">
-                    Website URL
-                </label>
-
-                {{ form.url }}
-
-                <div id="url-message" class="form-text">
-                    Paste a valid URL, such as https://example.com.
-                </div>
-
-                {% for error in form.url.errors %}
-                    <div class="text-danger small mt-1">{{ error }}</div>
-                {% endfor %}
-            </div>
-
-            <div class="mb-3">
-                <label for="{{ form.category.id_for_label }}"
-                       class="form-label fw-semibold">
-                    Category
-                </label>
-
-                {{ form.category }}
-
-                {% for error in form.category.errors %}
-                    <div class="text-danger small mt-1">{{ error }}</div>
-                {% endfor %}
-            </div>
-
-            <div class="mb-3">
-                <label for="{{ form.note.id_for_label }}"
-                       class="form-label fw-semibold">
-                    Note (optional)
-                </label>
-
-                {{ form.note }}
-
-                {% for error in form.note.errors %}
-                    <div class="text-danger small mt-1">{{ error }}</div>
-                {% endfor %}
-            </div>
-
-            <div class="form-check mb-4">
-                {{ form.is_visited }}
-
-                <label class="form-check-label"
-                       for="{{ form.is_visited.id_for_label }}">
-                    I've already explored this link
-                </label>
-
-                {% for error in form.is_visited.errors %}
-                    <div class="text-danger small mt-1">{{ error }}</div>
-                {% endfor %}
-            </div>
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary px-4">
-                    Save link
-                </button>
-
-                <a href="{% url 'link_list' %}"
-                   class="btn btn-light border">
-                    Cancel
-                </a>
-            </div>
+            <a href="{% url 'link_list' %}" class="form-cancel">Cancel and return to dashboard</a>
         </form>
-    </div>
+    </section>
 </div>
-
 {% endblock %}

@@ -4,62 +4,61 @@
 {% block title %}Create account | TabTidy{% endblock %}
 
 {% block content %}
-<div class="form-wrapper mx-auto">
-    <div class="form-card">
-        <a href="{% url 'login' %}" class="back-link">
-            ← Back to login
-        </a>
+<div class="auth-layout">
+    <section class="auth-intro">
+        <span class="eyebrow">A FRESH START</span>
+        <h1>Make room for <em>good discoveries.</em></h1>
+        <p>Create your own space to save useful websites, collect ideas, and keep everything organized.</p>
 
-        <h1 class="h3 fw-bold mt-3">Create your account</h1>
-        <p class="text-secondary">
-            Start building your own personal link collection.
-        </p>
+        <div class="auth-note">
+            <span class="auth-note-icon">✳</span>
+            <div>
+                <strong>Your links. Your way.</strong>
+                <p>One tidy space for the things you want to remember.</p>
+            </div>
+        </div>
+    </section>
 
-        <form method="post">
+    <section class="form-card">
+        <div class="form-heading">
+            <span class="form-symbol">✦</span>
+            <h2>Create your account</h2>
+            <p>Your personal link space starts here.</p>
+        </div>
+
+        <form method="post" class="tidy-form">
             {% csrf_token %}
 
             {% if form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {{ form.non_field_errors }}
-                </div>
+                <div class="form-alert">{{ form.non_field_errors }}</div>
             {% endif %}
+            
 
-            <div class="auth-field">
-                <label for="{{ form.username.id_for_label }}">Username</label>
-                {{ form.username }}
-                {% for error in form.username.errors %}
-                    <p class="field-error">{{ error }}</p>
-                {% endfor %}
-            </div>
+            {% for field in form %}
+                <div class="tidy-field">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
 
-            <div class="auth-field">
-                <label for="{{ form.password1.id_for_label }}">Password</label>
-                {{ form.password1 }}
-                <small>Use at least 8 characters.</small>
-                {% for error in form.password1.errors %}
-                    <p class="field-error">{{ error }}</p>
-                {% endfor %}
-            </div>
+                    {{ field }}
 
-            <div class="auth-field">
-                <label for="{{ form.password2.id_for_label }}">
-                    Confirm password
-                </label>
-                {{ form.password2 }}
-                {% for error in form.password2.errors %}
-                    <p class="field-error">{{ error }}</p>
-                {% endfor %}
-            </div>
+                    {% if field.errors %}
+                        <div class="field-error">
+                            {{ field.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}    
 
-            <button type="submit" class="btn btn-primary w-100">
-                Create account
+            <button type="submit" class="form-submit">
+                Create account <span>→</span>
             </button>
         </form>
 
-        <p class="text-center text-secondary mt-4 mb-0">
+        <p class="form-footer">
             Already have an account?
             <a href="{% url 'login' %}">Sign in</a>
         </p>
-    </div>
+    </section>
 </div>
 {% endblock %}
