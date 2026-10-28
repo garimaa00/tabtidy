@@ -1,51 +1,105 @@
-
 {% extends 'links/base.html' %}
 
 {% block title %}{% if object or link %}Edit link{% else %}Save a link{% endif %} | TabTidy{% endblock %}
 
 {% block content %}
 <div class="editor-layout">
+
     <section class="editor-intro">
         <span class="eyebrow">YOUR COLLECTION, GROWING</span>
 
-        <h1>{% if object or link %}Give this link a <em>little refresh.</em>{% else %}Found something <em>worth keeping?</em>{% endif %}</h1>
+        <h1>
+            {% if object or link %}
+                Give this link a <em>little refresh.</em>
+            {% else %}
+                Found something <em>worth keeping?</em>
+            {% endif %}
+        </h1>
 
-        <p>Save a useful website, add a few details, and make it easy to find again whenever you need it.</p>
+        <p>
+            Save a useful website, add a few details, and make it easy to
+            find again whenever you need it.
+        </p>
 
         <div class="editor-tip">
             <span>✳</span>
-            <p><strong>A tiny tip</strong><br>
-            Add a helpful note so future-you remembers why you saved it.</p>
+            <p>
+                <strong>A tiny tip</strong><br>
+                Add a helpful note so future-you remembers why you saved it.
+            </p>
         </div>
     </section>
 
     <section class="form-card link-form-card">
+
         <div class="form-heading">
             <span class="form-symbol">↗</span>
-            <h2>{% if object or link %}Edit your link{% else %}Save a new link{% endif %}</h2>
+            <h2>
+                {% if object or link %}Edit your link{% else %}Save a new link{% endif %}
+            </h2>
             <p>Just the details you need to keep things tidy.</p>
         </div>
 
-        <form method="post" class="tidy-form">
+        <form method="post" class="tidy-form" id="link-form" novalidate>
             {% csrf_token %}
 
             {% if form.non_field_errors %}
-                <div class="form-alert">{{ form.non_field_errors }}</div>
+                <div class="form-alert">
+                    {{ form.non_field_errors }}
+                </div>
             {% endif %}
 
-            {% for field in form %}
-                <div class="tidy-field">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
+            <!-- Title -->
+            <div class="tidy-field">
+                <label for="{{ form.title.id_for_label }}">Title</label>
 
-                    {% if field.help_text %}
-                        <small class="field-help">{{ field.help_text }}</small>
-                    {% endif %}
+                {{ form.title }}
 
-                    {% for error in field.errors %}
-                        <small class="field-error">{{ error }}</small>
-                    {% endfor %}
+                <div class="invalid-feedback" id="title-feedback">
+                    Please enter a title for your link.
                 </div>
+
+                {% for error in form.title.errors %}
+                    <div class="field-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <!-- URL -->
+            <div class="tidy-field">
+                <label for="{{ form.url.id_for_label }}">URL</label>
+
+                {{ form.url }}
+
+                <div class="invalid-feedback" id="url-feedback">
+                    Please enter a valid URL, such as https://example.com.
+                </div>
+
+                {% for error in form.url.errors %}
+                    <div class="field-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <!-- Remaining fields -->
+            {% for field in form %}
+                {% if field.name != 'title' and field.name != 'url' %}
+                    <div class="tidy-field">
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+                            <small class="field-help">
+                                {{ field.help_text }}
+                            </small>
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             {% endfor %}
 
             <button type="submit" class="form-submit">
@@ -53,8 +107,79 @@
                 <span>→</span>
             </button>
 
-            <a href="{% url 'link_list' %}" class="form-cancel">Cancel and return to dashboard</a>
+            <a href="{% url 'link_list' %}" class="form-cancel">
+                Cancel and return to dashboard
+            </a>
         </form>
     </section>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('link-form');
+    const title = document.getElementById('{{ form.title.id_for_label }}');
+    const url = document.getElementById('{{ form.url.id_for_label }}');
+
+    const titleFeedback = document.getElementById('title-feedback');
+    const urlFeedback = document.getElementById('url-feedback');
+
+    function validateTitle() {
+        const valid = title.value.trim().length > 0;
+
+        title.classList.toggle('is-invalid', !valid);
+        titleFeedback.style.display = valid ? 'none' : 'block';
+
+        return valid;
+    }
+
+    function validateUrl() {
+        const value = url.value.trim();
+        let valid = false;
+
+        if (value) {
+            try {
+                const parsed = new URL(
+                    /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(value)
+                        ? value
+                        : 'https://' + value
+                );
+
+                valid =
+                    ['http:', 'https:'].includes(parsed.protocol) &&
+                    parsed.hostname.includes('.') &&
+                    !parsed.hostname.startsWith('.') &&
+                    !parsed.hostname.endsWith('.');
+            } catch (error) {
+                valid = false;
+            }
+        }
+
+        url.classList.toggle('is-invalid', !valid);
+        urlFeedback.style.display = valid ? 'none' : 'block';
+
+        return valid;
+    }
+
+    titleFeedback.style.display = 'none';
+    urlFeedback.style.display = 'none';
+
+    title.addEventListener('input', validateTitle);
+    url.addEventListener('input', validateUrl);
+
+    form.addEventListener('submit', function (event) {
+        const titleValid = validateTitle();
+        const urlValid = validateUrl();
+
+        if (!titleValid || !urlValid) {
+            event.preventDefault();
+
+            if (!titleValid) {
+                title.focus();
+            } else {
+                url.focus();
+            }
+        }
+    });
+});
+</script>
 {% endblock %}
